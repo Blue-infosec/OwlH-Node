@@ -17,7 +17,7 @@ import (
 
 
 type Macs struct {
-    Mac         string              `json:"mac"`
+    Mac         net.HardwareAddr    `json:"mac"`
     IPs         []IP                `json:"ips"`
     White       bool                `json:"white"`
     Onnewip     bool                `json:"onnewip"`
@@ -49,11 +49,18 @@ type ARPConfig struct {
 }
 
 var arpmain ARPConfig
-var knownmacs Macs
-var currentmacs Macs
+var knownmacs map[net.HardwareAddr]Macs
+var currentmacs map[net.HardwareAddr]Macs
 
 func learnarp(arp *layers.ARP)(err error){
     logs.Info("learn arp in")
+    if val, ok := knownmacs[arp.DstHwAddress]; ok {
+        logs.Info("mac exists")
+    } else {
+        logs.Info("mac does not exist.... adding...")
+        knownmacs[arp.DstHwAddress] = nil
+    }
+
     return nil
 }
 
