@@ -16,8 +16,40 @@ import (
 )
 
 
+type Mac struct {
+    Mac         string              `json:"mac"`
+    IPs         []IP                `json:"ips"`
+    White       bool                `json:"white"`
+    Onnewip     bool                `json:"onnewip"`
+    Alerted     bool                `json:"alerted"`
+    First       string              `json:"first"`
+    Last        string              `json:"last"`
+}
+
+type IP struct {
+    Ip          string              `json:"ip"`
+    White       bool                `json:"white"`
+    First       string              `json:"first"`
+    Last        string              `json:"last"`
+}
+
+type Alert struct {
+    Sid         string              `json:"sid"`
+    Type        string              `json:"type"`
+    Signature   string              `json:"signature"`
+    Timestamp   string              `json:"timestamp"`
+}
+
+type ARPConfig struct {
+    Onnewmac    bool
+    Onnewip     bool
+    Enabled     bool
+    Learning    bool
+}
+
+
 func readARP(iface string)(err error) {
-    // var handle *pcap.Handle
+    // var handle *pcap.Handle  
     if handle1, err := pcap.OpenLive(iface, 65536, true, pcap.BlockForever); err != nil {
         logs.Error(err)
         return err
