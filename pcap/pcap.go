@@ -58,7 +58,9 @@ func learnarp(arp *layers.ARP)(err error){
         logs.Info("mac exists")
     } else {
         logs.Info("mac does not exist.... adding...")
-        knownmacs[arp.DstHwAddress] = nil
+        var cMac Macs
+        cMac.Mac = arp.DstHwAddress
+        knownmacs[arp.DstHwAddress] = cMac
     }
 
     return nil
