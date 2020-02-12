@@ -54,7 +54,7 @@ var currentmacs map[string]Macs
 
 func learnarp(arp *layers.ARP)(err error){
     logs.Info("learn arp in")
-    if val, ok := knownmacs[string(arp.DstHwAddress)]; ok {
+    if _, ok := knownmacs[string(arp.DstHwAddress)]; ok {
         logs.Info("mac exists")
     } else {
         logs.Info("mac does not exist.... adding...")
