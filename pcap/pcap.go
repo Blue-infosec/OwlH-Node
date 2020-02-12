@@ -49,8 +49,8 @@ type ARPConfig struct {
 }
 
 var arpmain ARPConfig
-var knownmacs map[string]Macs
-var currentmacs map[string]Macs
+knownmacs := map[string]Macs{}
+currentmacs := map[string]Macs{}
 
 func learnarp(arp *layers.ARP)(err error){
     logs.Info("learn arp in")
