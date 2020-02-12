@@ -49,18 +49,18 @@ type ARPConfig struct {
 }
 
 var arpmain ARPConfig
-knownmacs := map[string]Macs{}
-currentmacs := map[string]Macs{}
+Knownmacs := map[string]Macs{}
+Currentmacs := map[string]Macs{}
 
 func learnarp(arp *layers.ARP)(err error){
     logs.Info("learn arp in")
-    if _, ok := knownmacs[string(arp.DstHwAddress)]; ok {
+    if _, ok := Knownmacs[string(arp.DstHwAddress)]; ok {
         logs.Info("mac exists")
     } else {
         logs.Info("mac does not exist.... adding... %s", string(arp.DstHwAddress))
         var cMac Macs
         cMac.Mac = arp.DstHwAddress
-        knownmacs[string(arp.DstHwAddress)] := cMac
+        Knownmacs[string(arp.DstHwAddress)] = cMac
     }
 
     return nil
