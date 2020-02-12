@@ -16,7 +16,7 @@ import (
 )
 
 
-type Mac struct {
+type Macs struct {
     Mac         string              `json:"mac"`
     IPs         []IP                `json:"ips"`
     White       bool                `json:"white"`
@@ -45,11 +45,27 @@ type ARPConfig struct {
     Onnewip     bool
     Enabled     bool
     Learning    bool
+    Interface   string
 }
 
+var arpmain ARPConfig
+var knownmacs Macs
+var currentmacs Macs
+
+func learnarp(arp string)(err error){
+    logs.Info("learn arp in")
+    return nil
+}
+
+func checkarp(arp string)(err error){
+    logs.Info("check and alert IN")
+    return nil 
+}
 
 func readARP(iface string)(err error) {
-    // var handle *pcap.Handle  
+
+    iface = arpmain.Interface
+
     if handle1, err := pcap.OpenLive(iface, 65536, true, pcap.BlockForever); err != nil {
         logs.Error(err)
         return err
@@ -57,11 +73,6 @@ func readARP(iface string)(err error) {
         handle1.SetBPFFilter("arp")
         src := gopacket.NewPacketSource(handle1, layers.LayerTypeEthernet)
         in := src.Packets()
-    
-    // else if err := handle.SetBPFFilter("arp"); err != nil {  // optional
-    //   logs.Error(err)
-    //   return err
-    // } 
 
     for {
         packet := <-in
@@ -89,6 +100,13 @@ func readARP(iface string)(err error) {
             srchw = arp.SourceHwAddress
             logs.Info("who has %v tells %v(%v)", net.IPv4(arp.DstProtAddress[0],arp.DstProtAddress[1],arp.DstProtAddress[2],arp.DstProtAddress[3]), net.IPv4(arp.SourceProtAddress[0],arp.SourceProtAddress[1],arp.SourceProtAddress[2],arp.SourceProtAddress[3]), srchw.String())
         }else if arp.Operation == 2{
+            if arpmain.Learning {
+                logs.Info("learning")
+                learnarp(arp)
+            } else {
+                logs.Info("live")
+                checkarp(arp)
+            }
             // dsthw := string(arp.DstHwAddress[0])+":"+string(arp.DstHwAddress[1])+":"+string(arp.DstHwAddress[2])+":"+string(arp.DstHwAddress[3])+":"+string(arp.DstHwAddress[4])+":"+string(arp.DstHwAddress[5])
             dsthw = arp.DstHwAddress
             logs.Info("%v is at %v", net.IPv4(arp.DstProtAddress[0],arp.DstProtAddress[1],arp.DstProtAddress[2],arp.DstProtAddress[3]), dsthw)
@@ -165,6 +183,10 @@ func Init() {
         return
     }
     logs.Info(ifaces)
+
+    arpmain.Interface = "eth0"
+    arpmain.Learning = true
+
 
     go readARP("eth0")
 
