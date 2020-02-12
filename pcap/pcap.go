@@ -52,12 +52,12 @@ var arpmain ARPConfig
 var knownmacs Macs
 var currentmacs Macs
 
-func learnarp(arp string)(err error){
+func learnarp(arp *layers.ARP)(err error){
     logs.Info("learn arp in")
     return nil
 }
 
-func checkarp(arp string)(err error){
+func checkarp(arp *layers.ARP)(err error){
     logs.Info("check and alert IN")
     return nil 
 }
@@ -188,7 +188,7 @@ func Init() {
     arpmain.Learning = true
 
 
-    go readARP("eth0")
+    go readARP("")
 
     // var wg sync.WaitGroup
     // for _, iface := range ifaces {
